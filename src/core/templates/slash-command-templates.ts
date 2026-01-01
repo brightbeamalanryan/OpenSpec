@@ -34,6 +34,131 @@ Track these steps as TODOs and complete them one by one.
 const applyReferences = `**Reference**
 - Use \`openspec show <id> --json --deltas-only\` if you need additional context from the proposal while implementing.`;
 
+const applyMicroVibe = `**MicroVibe Mode (Optional)**
+
+MicroVibe is an incremental execution mode that delivers code unit-by-unit with explicit approval gates. Enable it when you want fine-grained control over AI-generated code.
+
+**Flags**
+| Flag | Short | Description |
+|------|-------|-------------|
+| \`--microvibe\` | \`--mv\` | Enable MicroVibe mode |
+| \`--granularity=<level>\` | | Approval unit: \`function\` (default), \`class\`, or \`file\` |
+| \`--tdd\` | | Test-first: generate tests before implementation |
+
+**When MicroVibe is enabled, follow this workflow:**
+
+1. **Check for existing session**: If \`openspec/changes/<id>/microvibe-state.json\` exists, prompt: "Previous session found. Resume from <unit> in task <task>? (y/n)"
+
+2. **For each code unit**, present these blocks in order:
+
+   **Context Block** - Explain where this unit fits:
+   \`\`\`
+   ┌─ CONTEXT ──────────────────────────────────────────────┐
+   │ <name> - <brief purpose>                               │
+   │                                                        │
+   │ WHERE IT FITS                                          │
+   │ • Layer: <infrastructure|domain|application|ui>       │
+   │ • Module: <module name>                                │
+   │ • File: <file path>                                    │
+   │                                                        │
+   │ PATTERNS & PRINCIPLES                                  │
+   │ • Pattern: <design pattern if applicable>              │
+   │ • Follows: <principles: SRP, DRY, etc.>                │
+   │                                                        │
+   │ DEPENDENCIES                                           │
+   │ • Imports: <key imports and why>                       │
+   │                                                        │
+   │ RELATIONSHIPS                                          │
+   │ • Called by: <callers>                                 │
+   │ • Calls: <callees>                                     │
+   │                                                        │
+   │ DESIGN RATIONALE                                       │
+   │ • Why this approach: <reasoning>                       │
+   │ • Trade-offs: <what was considered>                    │
+   │                                                        │
+   │ SPEC REFERENCE                                         │
+   │ • Implements: <requirement ID from spec>               │
+   └────────────────────────────────────────────────────────┘
+   \`\`\`
+
+   **Implementation Block** - For new code:
+   \`\`\`
+   ┌─ IMPLEMENTATION ──────────────────────────────────────┐
+   │ // <file path>                                        │
+   │                                                       │
+   │ <code here>                                           │
+   └───────────────────────────────────────────────────────┘
+   \`\`\`
+
+   **Modification Block** - For changes to existing code:
+   \`\`\`
+   ┌─ MODIFICATION ────────────────────────────────────────┐
+   │ <file path> - <function name>                         │
+   │                                                       │
+   │ @@ -<line>,<count> +<line>,<count> @@                 │
+   │  <context line>                                       │
+   │ -<removed line>                                       │
+   │ +<added line>                                         │
+   │  <context line>                                       │
+   └───────────────────────────────────────────────────────┘
+   \`\`\`
+
+   **Unit Test Block**:
+   \`\`\`
+   ┌─ UNIT TEST ───────────────────────────────────────────┐
+   │ // <test file path>                                   │
+   │                                                       │
+   │ <test code here>                                      │
+   └───────────────────────────────────────────────────────┘
+   \`\`\`
+
+3. **Approval Prompt**: After presenting blocks, show:
+   \`Approve this <unit type>? [y]es / [n]o / [s]kip / [q]uit: _\`
+
+   | Input | Action |
+   |-------|--------|
+   | \`y\` | Write files, run tests, proceed to next unit |
+   | \`n\` | Ask for feedback, regenerate the unit |
+   | \`s\` | Skip for now (mark pending), proceed to next |
+   | \`q\` | Save progress to state file, exit session |
+
+4. **Batch Approval**: For trivial code (getters, setters, type definitions), group into batches:
+   \`\`\`
+   ┌─ BATCH: <description> (<count> items) ─────────────────┐
+   │ <brief explanation>                                    │
+   │                                                        │
+   │ • <item 1>                                             │
+   │ • <item 2>                                             │
+   │ • ...                                                  │
+   │                                                        │
+   │ [v]iew full code | Approve batch? [y/n/s/q]: _         │
+   └────────────────────────────────────────────────────────┘
+   \`\`\`
+   Press \`v\` to see full implementations before deciding.
+
+5. **TDD Mode** (\`--tdd\` flag): Present tests before implementation:
+   - Show Context block
+   - Show Unit Test block → get approval
+   - Show Implementation block → get approval
+
+6. **State Persistence**: Save progress to \`openspec/changes/<id>/microvibe-state.json\`:
+   \`\`\`json
+   {
+     "version": "1.0",
+     "changeId": "<id>",
+     "progress": {
+       "currentTask": "<task number>",
+       "completedUnits": <count>,
+       "totalUnits": <count>,
+       "skippedUnits": ["<unit1>", "<unit2>"]
+     }
+   }
+   \`\`\`
+
+7. **Progress Display**: Show progress count with each unit (e.g., "3/12 units").
+
+8. **Completion**: When all units are approved, remove the state file.`
+
 const archiveSteps = `**Steps**
 1. Determine the change ID to archive:
    - If this prompt already includes a specific change ID (for example inside a \`<ChangeId>\` block populated by slash-command arguments), use that value after trimming whitespace.
@@ -51,7 +176,7 @@ const archiveReferences = `**Reference**
 
 export const slashCommandBodies: Record<SlashCommandId, string> = {
   proposal: [proposalGuardrails, proposalSteps, proposalReferences].join('\n\n'),
-  apply: [baseGuardrails, applySteps, applyReferences].join('\n\n'),
+  apply: [baseGuardrails, applySteps, applyReferences, applyMicroVibe].join('\n\n'),
   archive: [baseGuardrails, archiveSteps, archiveReferences].join('\n\n')
 };
 
