@@ -34,9 +34,11 @@ Track these steps as TODOs and complete them one by one.
 const applyReferences = `**Reference**
 - Use \`openspec show <id> --json --deltas-only\` if you need additional context from the proposal while implementing.`;
 
-const applyMicroVibe = `**MicroVibe Mode (Optional)**
+const applyMicroVibe = `**MicroVibe Mode** (v1.1)
 
-MicroVibe is an incremental execution mode that delivers code unit-by-unit with explicit approval gates. Enable it when you want fine-grained control over AI-generated code.
+IMPORTANT: If the command arguments include \`--mv\` or \`--microvibe\`, you MUST use MicroVibe mode instead of standard batch implementation. Check the arguments first.
+
+MicroVibe is an incremental execution mode that delivers code unit-by-unit with explicit approval gates.
 
 **Flags**
 | Flag | Short | Description |

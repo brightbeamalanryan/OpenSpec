@@ -306,6 +306,14 @@ describe('InitCommand', () => {
       expect(applyContent).toContain('name: OpenSpec: Apply');
       expect(applyContent).toContain('Work through tasks sequentially');
 
+      // MicroVibe mode instructions
+      expect(applyContent).toContain('**MicroVibe Mode**');
+      expect(applyContent).toContain('--mv');
+      expect(applyContent).toContain('--microvibe');
+      expect(applyContent).toContain(
+        'If the command arguments include `--mv` or `--microvibe`, you MUST use MicroVibe mode'
+      );
+
       const archiveContent = await fs.readFile(claudeArchive, 'utf-8');
       expect(archiveContent).toContain('name: OpenSpec: Archive');
       expect(archiveContent).toContain('openspec archive <id>');
