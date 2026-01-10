@@ -7,6 +7,9 @@
 - [x] 1.5 Add approval prompt options and their behaviors
 - [x] 1.6 Add batch approval documentation for trivial code
 - [x] 1.7 Add state file schema and resume behavior documentation
+- [x] 1.8 Add explicit stop-and-wait behavior after each approval prompt
+- [x] 1.9 Require one unit per response and file writes only after approval
+- [x] 1.10 Treat non-code artifacts as approval units and clarify ordering guidance
 
 ## 2. Testing and Validation
 

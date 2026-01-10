@@ -114,15 +114,19 @@ MicroVibe is an incremental execution mode that delivers code unit-by-unit with 
    └───────────────────────────────────────────────────────┘
    \`\`\`
 
+   Treat non-code artifacts (config files, scaffolding) as approval units and present them before deeper implementation units.
+
 3. **Approval Prompt**: After presenting blocks, show:
    \`Approve this <unit type>? [y]es / [n]o / [s]kip / [q]uit: _\`
 
    | Input | Action |
    |-------|--------|
-   | \`y\` | Write files, run tests, proceed to next unit |
+   | \`y\` | Write approved files, run tests, proceed to next unit |
    | \`n\` | Ask for feedback, regenerate the unit |
    | \`s\` | Skip for now (mark pending), proceed to next |
    | \`q\` | Save progress to state file, exit session |
+
+   Never write files before approval. After the prompt, end your response and wait for user input before presenting any further units. Present exactly one unit (or batch) per response.
 
 4. **Batch Approval**: For trivial code (getters, setters, type definitions), group into batches:
    \`\`\`

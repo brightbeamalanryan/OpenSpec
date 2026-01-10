@@ -107,9 +107,13 @@ The system SHALL present an approval prompt after each unit.
 - **WHEN** presenting a unit for approval
 - **THEN** show prompt: `Approve this function? [y]es / [n]o / [s]kip / [q]uit:`
 
+#### Scenario: Stop-and-wait after prompt
+- **WHEN** the approval prompt is shown
+- **THEN** the assistant ends its response and waits for user input before presenting any further units
+
 #### Scenario: Approve action
 - **WHEN** user enters `y`
-- **THEN** write files, run tests, proceed to next unit
+- **THEN** write approved changes to disk, run tests (if applicable), and present the next unit only after the next user turn
 
 #### Scenario: Reject action
 - **WHEN** user enters `n`
@@ -122,6 +126,22 @@ The system SHALL present an approval prompt after each unit.
 #### Scenario: Quit action
 - **WHEN** user enters `q`
 - **THEN** save progress to state file and exit session
+
+### Requirement: Unit Execution Boundaries
+
+The system SHALL present exactly one approval unit per assistant response and only proceed after explicit user input.
+
+#### Scenario: Single-unit response
+- **WHEN** MicroVibe is active
+- **THEN** the assistant presents exactly one unit (or one approved batch) per response before awaiting input
+
+#### Scenario: Non-code artifacts as units
+- **WHEN** the change includes configuration or scaffolding files
+- **THEN** the assistant treats each artifact as its own unit and awaits approval before continuing
+
+#### Scenario: Foundational ordering
+- **WHEN** both scaffolding and implementation units are required
+- **THEN** the assistant presents scaffolding units before deeper implementation units
 
 ### Requirement: Batch Approval
 

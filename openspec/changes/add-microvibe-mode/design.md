@@ -11,6 +11,7 @@ This is primarily an AI-assistant behavioral specification, not a CLI tool featu
 **Goals:**
 - Define clear output format for approval blocks (Context, Implementation, Test, Modification)
 - Specify approval prompt semantics (y/n/s/q/v)
+- Require explicit stop-and-wait behavior after each approval prompt
 - Define state file schema for session resume
 - Support three granularity levels with clear guidance
 - Enable TDD workflow variant
@@ -42,6 +43,13 @@ Use ASCII box characters (`┌─┐│└─┘`) for visual separation. These 
 *Alternatives considered:*
 - Markdown code blocks: Less visually distinct
 - Plain separators: Harder to scan
+
+**Decision: Single-unit response gating**
+After each unit, the assistant must end its response at the approval prompt and wait for user input before continuing. This makes the experience feel like pair programming and prevents multi-unit "big bang" outputs.
+
+*Alternatives considered:*
+- Allow multi-unit responses with a single summary approval: Rejected because it defeats incremental validation
+- Implicit pauses without an explicit prompt: Rejected because it is too easy to skip the wait step
 
 ## Risks / Trade-offs
 
