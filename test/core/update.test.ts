@@ -406,6 +406,46 @@ Old body
     consoleSpy.mockRestore();
   });
 
+  it('should refresh existing Codex apply prompt with MicroVibe instructions', async () => {
+    const codexPath = path.join(
+      testDir,
+      '.codex',
+      'prompts',
+      'openspec-apply.md'
+    );
+    await fs.mkdir(path.dirname(codexPath), { recursive: true });
+    const initialContent = `---
+description: Old description
+argument-hint: change-id
+---
+
+$ARGUMENTS
+<!-- OPENSPEC:START -->
+Old body
+<!-- OPENSPEC:END -->`;
+    await fs.writeFile(codexPath, initialContent);
+
+    const consoleSpy = vi.spyOn(console, 'log');
+
+    await updateCommand.execute(testDir);
+
+    const updated = await fs.readFile(codexPath, 'utf-8');
+    expect(updated).toContain(
+      'description: Implement an approved OpenSpec change and keep tasks in sync.'
+    );
+    expect(updated).toContain('argument-hint: change-id');
+    expect(updated).toContain('**MicroVibe Mode**');
+    expect(updated).toContain('`--mv`');
+    expect(updated).not.toContain('Old body');
+
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      'Updated slash commands: .codex/prompts/openspec-apply.md'
+    );
+
+    consoleSpy.mockRestore();
+  });
+
   it('should refresh existing Kilo Code workflows', async () => {
     const kilocodePath = path.join(
       testDir,
