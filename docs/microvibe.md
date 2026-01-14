@@ -1,6 +1,6 @@
 # MicroVibe: Take Control of AI Code Generation
 
-![MicroVibe Infographic](./assets/MVibe-IGraphic.png)
+![MicroVibe Infographic](../assets/MVibe-IGraphic.png)
 
 ## The Problem
 
