@@ -34,7 +34,7 @@ Track these steps as TODOs and complete them one by one.
 const applyReferences = `**Reference**
 - Use \`openspec show <id> --json --deltas-only\` if you need additional context from the proposal while implementing.`;
 
-const applyMicroVibe = `**MicroVibe Mode** (v1.1)
+const applyMicroVibe = `**MicroVibe Mode** (v1.2)
 
 IMPORTANT: If the command arguments include \`--mv\` or \`--microvibe\`, you MUST use MicroVibe mode instead of standard batch implementation. Check the arguments first.
 
@@ -163,7 +163,33 @@ MicroVibe is an incremental execution mode that delivers code unit-by-unit with 
 
 7. **Progress Display**: Show progress count with each unit (e.g., "3/12 units").
 
-8. **Completion**: When all units are approved, remove the state file.`
+8. **Completion**: When all units are approved, remove the state file.
+
+**CRITICAL REQUIREMENTS** (these define MicroVibe—never skip them)
+
+1. **CORE CONCEPT**: MicroVibe is incremental execution with explicit approval gates.
+   - Present ONE unit per response, then STOP and WAIT for user input
+   - Never batch multiple units into a single response (except trivial batches)
+   - Never write files before receiving explicit approval
+
+2. **GRANULARITY**: Respect the \`--granularity\` flag to determine unit size.
+   - \`function\` (default): Each function/method is a separate approval unit
+   - \`class\`: Each class/module is a separate approval unit
+   - \`file\`: Each file is a separate approval unit
+
+3. **CONTEXT BLOCK**: MANDATORY for every unit—this is the educational core.
+   - Always include WHERE IT FITS (layer, module, file location)
+   - Always include DESIGN RATIONALE (why this approach, trade-offs considered)
+   - Always include RELATIONSHIPS (what calls this, what this calls)
+   - Always include SPEC REFERENCE (which requirement this implements)
+   - The Context Block explains the "why"—without it, MicroVibe loses its value
+
+4. **ITERATIVE EVOLUTION**: The user controls the pace and direction.
+   - Stop and wait after EVERY approval prompt—no exceptions
+   - On rejection (\`n\`): ask for feedback, then regenerate the unit incorporating that feedback
+   - On skip (\`s\`): mark as pending, move to next unit
+   - On quit (\`q\`): persist state so the session can resume later
+   - Each iteration should reflect lessons learned from previous feedback`
 
 const archiveSteps = `**Steps**
 1. Determine the change ID to archive:

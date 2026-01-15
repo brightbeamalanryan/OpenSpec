@@ -93,6 +93,7 @@ Progress is tracked in a state file (`microvibe-progress.json`), allowing you to
 | **Educational Context** | The mandatory context block explains the "why" behind the code, not just the "what" |
 | **Interruptible Workflow** | Quit and resume coding sessions without losing your place or context |
 | **Flexible Granularity** | Start with fine-grained control and move to coarser approvals as you build trust in the AI |
+| **Compaction Resilient** | Critical requirements survive AI context compaction during long sessions (v1.2+) |
 
 ## Licence
 
